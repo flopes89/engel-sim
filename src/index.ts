@@ -1,5 +1,5 @@
-import { createDeck } from "./model/element";
-import { calculateOrbit } from "./model/calc";
+import { createDeck } from "./element";
+import { totalWeight } from "./calc";
 
 const createElements = () => {
     const deck = createDeck();
