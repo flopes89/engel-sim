@@ -1,14 +1,12 @@
-import { Card } from "./element";
+import { Card } from "./deck";
 import * as R from "ramda";
 
-export const totalWeight = (deck: Card[]): number =>
-    R.pipe(
-        R.map<Card, number>(el => el.weight),
-        R.sum,
-    )(deck);
+export const totalWeight = R.pipe(
+    R.map<Card, number>(el => el.weight),
+    R.sum,
+);
 
-export const totalSeed = (deck: Card[]): number =>
-    R.pipe(
-        R.map<Card, number>(el => el.seed),
-        R.sum,
-    )(deck);
+export const totalSeed = R.pipe(
+    R.map<Card, number>(el => el.seed),
+    R.sum,
+);

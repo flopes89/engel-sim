@@ -1,4 +1,4 @@
-import { Card } from "./element";
+import { Card } from "./deck";
 
 export interface Player {
     drawPile: Card[],

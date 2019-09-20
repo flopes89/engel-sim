@@ -1,5 +1,5 @@
 import { Player } from "./player";
-import { Card } from "./element";
+import { Card } from "./deck";
 
 export interface Game {
     players: Player[],

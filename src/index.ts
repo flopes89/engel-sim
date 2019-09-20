@@ -1,4 +1,4 @@
-import { createDeck } from "./element";
+import { createDeck } from "./deck";
 import { totalWeight } from "./calc";
 
 const createElements = () => {

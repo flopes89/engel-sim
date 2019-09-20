@@ -1,4 +1,4 @@
-import { Card } from "./element";
+import { Card } from "./deck";
 import { totalWeight, totalSeed } from "./calc";
 
 const deck: Card[] = [
@@ -9,10 +9,10 @@ const deck: Card[] = [
     { name: "XXX", orderNumber: 0, weight: 0, seed: 1, },
 ];
 
-test("weight", () => {
+test("total weight of a deck", () => {
     expect(totalWeight(deck)).toBe(330);
 });
 
-test("seed", () => {
+test("total seed of a deck", () => {
     expect(totalSeed(deck)).toBe(-40);
 });

@@ -1,21 +1,4 @@
-import { replicate, flatten } from "fp-ts/lib/Array";
-
-export interface Card {
-    name: string,
-    orderNumber: number,
-    weight: number,
-    seed: number,
-};
-
-export interface DeckDefinition {
-    [name: string]: number
-};
-
-const createElements = (definition: DeckDefinition, card: Card): Card[] =>
-    replicate(definition[card.name], card);
-
-const buildDeck = (pool: Card[], definition: DeckDefinition): Card[] =>
-    flatten(pool.map(card => createElements(definition, card)));
+import { DeckDefinition, Card, buildDeck } from "../deck";
 
 export const cardDefinitions: Card[] = [
     { name: "H", orderNumber: 1, weight: 1, seed: 0, },
@@ -66,5 +49,4 @@ export const deckDefinition: DeckDefinition = {
     "Ag": 2, "Sn": 2, "Nd": 2, "Pt": 2, "Au": 2, "Hg": 2, "Pb": 2, "U": 2, "Pu": 2,
 };
     
-export const createDeck = (): Card[] => buildDeck(pool, deckDefinition);
-
+export const createDeck = (): Card[] => buildDeck(cardDefinitions, deckDefinition);
