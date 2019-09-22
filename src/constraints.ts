@@ -1,7 +1,6 @@
 import { Player } from "./player";
-import { Card, DeckDefinition } from "./deck";
+import { Card } from "./deck";
 import * as R from "ramda";
-import map from "ramda/es/map";
 
 /**
  * Determines if a player can afford to create a card
@@ -33,20 +32,17 @@ export const canFuse = (card1: Card, card2: Card, pool: Card[]): boolean =>
  * @param card Card to fiss
  * @param pool Pool of available cards
  */
-export const getFissCandidates = (card: Card, pool: Card[]): Card[][] => {
-    const right = R.clone(pool);
-    const result = pool.map((cardLeft, indexLeft) => 
-        right
+export const getFissCandidates = (card: Card, pool: Card[]): Array<[Card, Card]> =>
+    pool.flatMap((cardLeft, indexLeft) => 
+        R.clone(pool)
+            // TODO Could use `R.xprod` for this?
             // Filter out any cards that have already been compared and the current card itself
-            .filter((x, indexRight) => indexRight > indexLeft)
+            .filter((_, indexRight) => indexRight > indexLeft)
             // Then filter out cards that cannot be used with cardLeft as a result of fissing card
             .filter(cardRight => cardLeft.orderNumber + cardRight.orderNumber === card.weight)
             // Combine each left over card with the cardLeft to form the combination pairs
-            .map(cardRight => [cardLeft, cardRight])
+            .map<[Card, Card]>(cardRight => [cardLeft, cardRight])
     );
-    //@ts-ignore
-    return R.unnest(result);
-};
 
 /**
  * Determines if a card has fissing candidates in a pool
@@ -55,3 +51,9 @@ export const getFissCandidates = (card: Card, pool: Card[]): Card[][] => {
  */
 export const canFiss = (card: Card, pool: Card[]): boolean =>
     getFissCandidates(card, pool).length > 0;
+
+/**
+ * Checks if a deck has cards left
+ * @param deck Deck to check
+ */
+export const hasCards = (deck: Card[]) => R.gt(deck.length, 0);

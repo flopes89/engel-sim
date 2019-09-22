@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
         "strict": true,
+        "target": "es2019",
+        "esModuleInterop": true,
         "sourceMap": true,
         "outDir": "dist"
     },
