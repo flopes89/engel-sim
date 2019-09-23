@@ -7,7 +7,7 @@ import * as R from "ramda";
  * @param player Player to check
  * @param card Card to check
  */
-export const canAfford = (player: Player, card: Card): boolean => player.energy >= card.weight;
+export const canCreate = (player: Player, card: Card) => player.energy >= card.weight;
 
 /**
  * Determines if two cards can be fused to target card
@@ -24,7 +24,7 @@ export const canFuse = (card1: Card, card2: Card) =>
  * @param card2 Second card to fuse
  * @param pool Pool of available cards
  */
-export const getFuseCandidates = (card1: Card, card2: Card, pool: Card[]): Card[] =>
+export const getFuseCandidates = (card1: Card, card2: Card, pool: Card[]) =>
     pool.filter(canFuse(card1, card2));
 
 /**
@@ -33,7 +33,7 @@ export const getFuseCandidates = (card1: Card, card2: Card, pool: Card[]): Card[
  * @param card2 Second card to fuse
  * @param pool Pool of available cards
  */
-export const hasFuseCandidates = (card1: Card, card2: Card, pool: Card[]): boolean =>
+export const hasFuseCandidates = (card1: Card, card2: Card, pool: Card[]) =>
     getFuseCandidates(card1, card2, pool).length > 0;
 
 /**
@@ -41,7 +41,7 @@ export const hasFuseCandidates = (card1: Card, card2: Card, pool: Card[]): boole
  * @param card Card to fiss
  * @param pool Pool of available cards
  */
-export const getFissCandidates = (card: Card, pool: Card[]): Array<[Card, Card]> =>
+export const getFissCandidates = (card: Card, pool: Card[]) =>
     pool.flatMap((cardLeft, indexLeft) => 
         R.clone(pool)
             // TODO Could use `R.xprod` for this?
@@ -58,7 +58,7 @@ export const getFissCandidates = (card: Card, pool: Card[]): Array<[Card, Card]>
  * @param card Card to fiss
  * @param pool Pool of available cards
  */
-export const hasFissCandidates = (card: Card, pool: Card[]): boolean =>
+export const hasFissCandidates = (card: Card, pool: Card[]) =>
     getFissCandidates(card, pool).length > 0;
 
 /**
