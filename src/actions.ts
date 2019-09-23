@@ -1,8 +1,67 @@
 import { Card } from "./deck";
 import * as R from "ramda";
 import { Player } from "./player";
+import { canFuse, hasCards, canFiss } from "./constraints";
 
-export const fuse = (card1: Card, card2: Card): Card|null => null;
+/**
+ * Fiss a card from the perspective of a player
+ * @param player Player that executes the action
+ * @param card Card to fiss
+ * @param target1 First fiss result card
+ * @param target2 Second fiss result card
+ */
+export const fiss = (player: Player, card: Card, target1: Card, target2: Card): Player => {
+    if (!canFiss(card, target1, target2)) {
+        throw "Fission is not valid!";
+    }
+
+    const newPlayer = R.clone(player);
+    const handCard = R.find<Card>(c => R.equals(c, card), player.hand);
+
+    if (!handCard) {
+        throw "Card must be in hand!";
+    }
+
+    newPlayer.hand = destroyCard(newPlayer.hand, [handCard]);
+    newPlayer.discardPile.push(R.clone(target1));
+    newPlayer.discardPile.push(R.clone(target2));
+    // TODO Energy output?
+    return newPlayer;
+};
+
+/**
+ * Fuses two cards from the perspective of a player
+ * @param player Player that executes the action
+ * @param card1 First card to fuse
+ * @param card2 Second card to fuse
+ * @param target Fusion target card
+ */
+export const fuse = (player: Player, card1: Card, card2: Card, target: Card): Player => {
+    if (!canFuse(card1, card2)(target)) {
+        throw "Fusion is not valid!";
+    }
+
+    const newPlayer = R.clone(player);
+    const handCard1 = R.find<Card>(c => R.equals(c, card1), player.hand);
+    const handCard2 = R.find<Card>(c => R.equals(c, card2), player.hand);
+
+    if (!handCard1 || !handCard2) {
+        throw "Cards must be in hand!";
+    }
+
+    newPlayer.hand = destroyCard(newPlayer.hand, [handCard1, handCard2]);
+    newPlayer.discardPile.push(R.clone(target));
+    // TODO Energy output?
+    return newPlayer;
+};
+
+/**
+ * Destroy a card from a deck
+ * @param deck Deck the destroy the card from
+ * @param cards The card to destroy
+ * @returns New deck without the card
+ */
+export const destroyCard = (deck: Card[], cards: Card[]): Card[] => R.without(cards, R.clone(deck));
 
 /**
  * Takes a deck of cards and returns a shuffled copy of it
@@ -28,9 +87,11 @@ export const drawCard = (player: Player, deck: Card[]): [Player, Card[]] => {
     const newDeck = R.clone(deck);
     const card = newDeck.shift();
 
-    if (card) {
-        newPlayer.hand.push(card);
+    if (!card) {
+        throw "Cannot draw from empty deck";
     }
+
+    newPlayer.hand.push(card);
 
     return [newPlayer, newDeck];
 };
@@ -43,6 +104,11 @@ export const drawCard = (player: Player, deck: Card[]): [Player, Card[]] => {
  */
 export const discardCard = (player: Player, card: Card): Player => {
     const newPlayer = R.clone(player);
+    
+    if (!hasCards(player.hand)) {
+        return newPlayer;
+    }
+
     newPlayer.hand = R.without([card], newPlayer.hand);
     newPlayer.discardPile.push(R.clone(card));
     return newPlayer;

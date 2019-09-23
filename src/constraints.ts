@@ -10,13 +10,22 @@ import * as R from "ramda";
 export const canAfford = (player: Player, card: Card): boolean => player.energy >= card.weight;
 
 /**
+ * Determines if two cards can be fused to target card
+ * @param card1 First card to fuse
+ * @param card2 Second card to fuse
+ * @param target Target card
+ */
+export const canFuse = (card1: Card, card2: Card) =>
+    (target: Card) => R.equals(target.orderNumber)(R.sum([card1.weight, card2.weight]));
+
+/**
  * Get candidates for fusing from a pool based on two existing cards
  * @param card1 First card to fuse
  * @param card2 Second card to fuse
  * @param pool Pool of available cards
  */
-export const getFuseCandidates = (card1: Card, card2: Card, pool: Card[]): Card[] => 
-    pool.filter(c => c.orderNumber === card1.weight + card2.weight)
+export const getFuseCandidates = (card1: Card, card2: Card, pool: Card[]): Card[] =>
+    pool.filter(canFuse(card1, card2));
 
 /**
  * Determines if two cards can be fused to a new card from a pool
@@ -24,7 +33,7 @@ export const getFuseCandidates = (card1: Card, card2: Card, pool: Card[]): Card[
  * @param card2 Second card to fuse
  * @param pool Pool of available cards
  */
-export const canFuse = (card1: Card, card2: Card, pool: Card[]): boolean =>
+export const hasFuseCandidates = (card1: Card, card2: Card, pool: Card[]): boolean =>
     getFuseCandidates(card1, card2, pool).length > 0;
 
 /**
@@ -49,8 +58,17 @@ export const getFissCandidates = (card: Card, pool: Card[]): Array<[Card, Card]>
  * @param card Card to fiss
  * @param pool Pool of available cards
  */
-export const canFiss = (card: Card, pool: Card[]): boolean =>
+export const hasFissCandidates = (card: Card, pool: Card[]): boolean =>
     getFissCandidates(card, pool).length > 0;
+
+/**
+ * Determines if a card can be fissed into two other cards
+ * @param card Card to fiss
+ * @param target1 First fiss candidate
+ * @param target2 Second fiss candidate
+ */
+export const canFiss = (card: Card, target1: Card, target2: Card) =>
+    R.equals(card.weight)(R.sum([target1.orderNumber, target2.orderNumber]));
 
 /**
  * Checks if a deck has cards left
