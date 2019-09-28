@@ -2,6 +2,7 @@ import * as R from "ramda";
 import { Card } from "./deck";
 import { canFiss, canFuse, hasCards, canCreate } from "./constraints";
 import { destroyCard } from "./actions";
+import { energyGainFromFiss, energyGainFromFuse } from "./calc";
 
 export interface Player {
     drawPile: Card[],
@@ -32,7 +33,9 @@ export const fiss = (player: Player, card: Card, target1: Card, target2: Card) =
     newPlayer.hand = destroyCard(newPlayer.hand, [handCard]);
     newPlayer.discardPile.push(R.clone(target1));
     newPlayer.discardPile.push(R.clone(target2));
-    // TODO Energy output?
+
+    newPlayer.energy += energyGainFromFiss(card, target1, target2);
+
     return newPlayer;
 };
 
@@ -58,7 +61,9 @@ export const fuse = (player: Player, card1: Card, card2: Card, target: Card) => 
 
     newPlayer.hand = destroyCard(newPlayer.hand, [handCard1, handCard2]);
     newPlayer.discardPile.push(R.clone(target));
-    // TODO Energy output?
+
+    newPlayer.energy += energyGainFromFuse(card1, card2, target);
+
     return newPlayer;
 };
 

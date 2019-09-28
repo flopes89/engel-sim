@@ -44,7 +44,7 @@ export const hasFuseCandidates = (card1: Card, card2: Card, pool: Card[]) =>
 export const getFissCandidates = (card: Card, pool: Card[]) =>
     pool.flatMap((cardLeft, indexLeft) => 
         R.clone(pool)
-            // TODO Could use `R.xprod` for this?
+            // TODO Could `R.xprod` be used for this?
             // Filter out any cards that have already been compared and the current card itself
             .filter((_, indexRight) => indexRight > indexLeft)
             // Then filter out cards that cannot be used with cardLeft as a result of fissing card
