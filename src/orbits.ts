@@ -1,5 +1,6 @@
 import { Card } from "./deck";
-import { temperature, seed } from "./calc";
+import { temperature, seed, compareViability } from "./calc";
+import * as R from "ramda";
 
 export enum Temperature {
     FREEZING = -3,
@@ -34,3 +35,11 @@ export const getPlanet = (deck: Card[]): Planet => ({
     temperature: temperature(deck),
     seed: seed(deck),
 });
+
+export const reorder = (orbits: Orbits): Orbits => {
+    const newOrbits = R.clone(orbits);
+
+    newOrbits.planets = R.sort(compareViability, newOrbits.planets);
+
+    return newOrbits;
+};

@@ -1,5 +1,6 @@
 import { Card } from "./deck";
 import * as R from "ramda";
+import { Planet } from "./orbits";
 
 /**
  * Calculates the amount of energy gained by fissing a card
@@ -38,3 +39,16 @@ export const totalSeed = R.pipe(
 export const temperature = totalWeight; // TODO Special effects of cards?
 
 export const seed = totalSeed; // TODO Special effects of cards?
+
+/**
+ * Calculates the viability (score) of a planet
+ * @param planet Planet to calculate for
+ */
+export const planetViability = (planet: Planet) => R.sum([planet.seed, planet.temperature]);
+
+/**
+ * Compares two planets and returns a number indicating the difference between them
+ * @param left Planet to compare
+ * @param right Planet to compare
+ */
+export const compareViability = (left: Planet, right: Planet) => planetViability(left) - planetViability(right);
