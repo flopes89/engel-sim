@@ -1,4 +1,4 @@
-import * as R from "ramda";
+import _ from "lodash";
 import { Card } from "./deck";
 import { canFiss, canFuse, hasCards, canCreate } from "./constraints";
 import { destroyCard } from "./actions";
@@ -23,16 +23,16 @@ export const fiss = (player: Player, card: Card, target1: Card, target2: Card) =
         throw "Fission is not valid!";
     }
 
-    const newPlayer = R.clone(player);
-    const handCard = R.find<Card>(c => R.equals(c, card), player.hand);
+    const newPlayer = _.cloneDeep(player);
+    const handCard = player.hand.find(c => _.isEqual(c, card));
 
     if (!handCard) {
         throw "Card must be in hand!";
     }
 
     newPlayer.hand = destroyCard(newPlayer.hand, [handCard]);
-    newPlayer.discardPile.push(R.clone(target1));
-    newPlayer.discardPile.push(R.clone(target2));
+    newPlayer.discardPile.push(_.cloneDeep(target1));
+    newPlayer.discardPile.push(_.cloneDeep(target2));
 
     newPlayer.energy += energyGainFromFiss(card, target1, target2);
 
@@ -51,16 +51,16 @@ export const fuse = (player: Player, card1: Card, card2: Card, target: Card) => 
         throw "Fusion is not valid!";
     }
 
-    const newPlayer = R.clone(player);
-    const handCard1 = R.find<Card>(c => R.equals(c, card1), player.hand);
-    const handCard2 = R.find<Card>(c => R.equals(c, card2), player.hand);
+    const newPlayer = _.cloneDeep(player);
+    const handCard1 = player.hand.find(c => _.isEqual(c, card1));
+    const handCard2 = player.hand.find(c => _.isEqual(c, card2));
 
     if (!handCard1 || !handCard2) {
         throw "Cards must be in hand!";
     }
 
     newPlayer.hand = destroyCard(newPlayer.hand, [handCard1, handCard2]);
-    newPlayer.discardPile.push(R.clone(target));
+    newPlayer.discardPile.push(_.cloneDeep(target));
 
     newPlayer.energy += energyGainFromFuse(card1, card2, target);
 
@@ -74,8 +74,8 @@ export const fuse = (player: Player, card1: Card, card2: Card, target: Card) => 
  * @returns A tuple of the new player and deck object
  */
 export const drawCard = (player: Player, deck: Card[]): [Player, Card[]] => {
-    const newPlayer = R.clone(player);
-    const newDeck = R.clone(deck);
+    const newPlayer = _.cloneDeep(player);
+    const newDeck = _.cloneDeep(deck);
     const card = newDeck.shift();
 
     if (!card) {
@@ -94,14 +94,14 @@ export const drawCard = (player: Player, deck: Card[]): [Player, Card[]] => {
  * @returns A new player object
  */
 export const discardCard = (player: Player, card: Card) => {
-    const newPlayer = R.clone(player);
+    const newPlayer = _.cloneDeep(player);
     
     if (!hasCards(player.hand)) {
         return newPlayer;
     }
 
-    newPlayer.hand = R.without([card], newPlayer.hand);
-    newPlayer.discardPile.push(R.clone(card));
+    newPlayer.hand = newPlayer.hand.filter(c => _.isEqual(c, card));
+    newPlayer.discardPile.push(_.cloneDeep(card));
     return newPlayer;
 };
 
@@ -112,13 +112,13 @@ export const discardCard = (player: Player, card: Card) => {
  * @returns A new player object
  */
 export const createCard = (player: Player, card: Card) => {
-    const newPlayer = R.clone(player);
+    const newPlayer = _.cloneDeep(player);
 
     if (!canCreate(player, card)) {
         throw "Cannot afford to create card";
     }
 
     newPlayer.energy -= card.weight;
-    newPlayer.discardPile.push(R.clone(card));
+    newPlayer.discardPile.push(_.cloneDeep(card));
     return newPlayer;
 };

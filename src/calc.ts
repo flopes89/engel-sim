@@ -1,5 +1,4 @@
 import { Card } from "./deck";
-import * as R from "ramda";
 import { Planet } from "./orbits";
 
 /**
@@ -23,18 +22,20 @@ export const energyGainFromFuse = (card1: Card, card2: Card, target: Card) =>
 /**
  * Calcualtes the total weight of a set of cards
  */
-export const totalWeight = R.pipe(
-    R.map<Card, number>(el => el.weight),
-    R.sum,
-);
+export const totalWeight = (deck: Card[]) => {
+    let total = 0;
+    deck.forEach(card => total += card.weight);
+    return total;
+};
 
 /**
  * Calcualtes the total seed of a deck of cards
  */
-export const totalSeed = R.pipe(
-    R.map<Card, number>(el => el.seed),
-    R.sum,
-);
+export const totalSeed = (deck: Card[]) => {
+    let total = 0;
+    deck.forEach(card => total += card.seed);
+    return total;
+};
 
 export const temperature = totalWeight; // TODO Special effects of cards?
 
@@ -44,7 +45,7 @@ export const seed = totalSeed; // TODO Special effects of cards?
  * Calculates the viability (score) of a planet
  * @param planet Planet to calculate for
  */
-export const planetViability = (planet: Planet) => R.sum([planet.seed, planet.temperature]);
+export const planetViability = (planet: Planet) => planet.seed + planet.temperature;
 
 /**
  * Compares two planets and returns a number indicating the difference between them

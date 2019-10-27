@@ -1,6 +1,5 @@
 import { Player } from "./player";
 import { Card } from "./deck";
-import * as R from "ramda";
 
 /**
  * Determines if a player can afford to create a card
@@ -16,7 +15,7 @@ export const canCreate = (player: Player, card: Card) => player.energy >= card.w
  * @param target Target card
  */
 export const canFuse = (card1: Card, card2: Card) =>
-    (target: Card) => R.equals(target.orderNumber)(R.sum([card1.weight, card2.weight]));
+    (target: Card) => target.orderNumber === card1.weight + card2.weight;
 
 /**
  * Get candidates for fusing from a pool based on two existing cards
@@ -43,7 +42,7 @@ export const hasFuseCandidates = (card1: Card, card2: Card, pool: Card[]) =>
  */
 export const getFissCandidates = (card: Card, pool: Card[]) =>
     pool.flatMap((cardLeft, indexLeft) => 
-        R.clone(pool)
+        pool
             // TODO Could `R.xprod` be used for this?
             // Filter out any cards that have already been compared and the current card itself
             .filter((_, indexRight) => indexRight > indexLeft)
@@ -68,10 +67,10 @@ export const hasFissCandidates = (card: Card, pool: Card[]) =>
  * @param target2 Second fiss candidate
  */
 export const canFiss = (card: Card, target1: Card, target2: Card) =>
-    R.equals(card.weight)(R.sum([target1.orderNumber, target2.orderNumber]));
+    card.weight === target1.orderNumber + target2.orderNumber;
 
 /**
  * Checks if a deck has cards left
  * @param deck Deck to check
  */
-export const hasCards = (deck: Card[]) => R.gt(deck.length, 0);
+export const hasCards = (deck: Card[]) => deck.length > 0;
